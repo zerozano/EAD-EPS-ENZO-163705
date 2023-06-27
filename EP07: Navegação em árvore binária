@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct No {
+    char data;
+    struct No* e;
+    struct No* d;
+};
+
+struct No* crianovono(char data) {
+    struct No* no = malloc(sizeof(struct No));
+    no->data = data;
+    no->e = NULL;
+    no->d = NULL;
+    return no;
+}
+
+int busca(char v[], int start, int end, char valor) {
+    for (int i = start; i <= end; i++) {
+        if (v[i] == valor)
+            return i;
+    }
+    return -1;
+}
+
+struct No* arvore(char pre[], char in[], int start, int end, int* prefixo) {
+    if (start > end)
+        return NULL;
+
+    struct No* no = crianovono(pre[*prefixo]);
+    (*prefixo)++;
+
+    if (start == end)
+        return no;
+
+    int infixo = busca(in, start, end, no->data);
+    no->e = arvore(pre, in, start, infixo - 1, prefixo);
+    no->d = arvore(pre, in, infixo + 1, end, prefixo);
+
+    return no;
+}
+
+void posfixo(struct No* no) {
+    if (no == NULL)
+        return;
+
+    posfixo(no->e);
+    posfixo(no->d);
+    printf("%c", no->data);
+}
+
+void conversorParaPosFixo(char pre[], char in[], int tamanho) {
+    int PREFIXO = 0;
+    struct No* RAIZ = arvore(pre, in, 0, tamanho - 1, &PREFIXO);
+    posfixo(RAIZ);
+    printf("\n");
+}
+
+int main() {
+    int num1, num2;
+    char string1[100];
+    char string2[100];
+    scanf("%d", &num1);
+    for (int i = 0; i < num1; i++) {
+        scanf("%d %s %s", &num2, string1, string2);
+        conversorParaPosFixo(string1, string2, num2);
+    }
+
+    return 0;
+}
