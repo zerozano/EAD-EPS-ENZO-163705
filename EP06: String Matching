@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+
+void trivial(const char* zelda, const char* carta) {
+  char capsZelda[100000];
+  char capsCarta[100000];
+  
+  for (int i = 0; zelda[i]; i++) 
+    capsZelda[i] = tolower(zelda[i]);
+  
+  capsZelda[strlen(zelda)] = '\0';
+  for (int i = 0; carta[i]; i++) 
+    capsCarta[i] = tolower(carta[i]);
+  
+  capsCarta[strlen(carta)] = '\0';
+  const char* ocorr = strstr(capsCarta, capsZelda);
+  if (ocorr != NULL) {
+    printf("Link Bolado\n");
+  } else {
+    printf("Link Tranquilo\n");
+  }
+}
+
+int main() {
+  char trigger[] = "zelda";
+  int m = 5;
+  char carta[100000];
+
+  
+
+  fgets(carta, sizeof(carta), stdin);
+
+  int n = strlen(carta);
+  carta[n - 1] = '\0';
+  
+  
+  trivial(trigger, carta);
+
+  return 0;
+}
