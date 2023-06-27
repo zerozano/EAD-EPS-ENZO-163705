@@ -1,0 +1,92 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#define MAX_CIDADES 1000
+
+typedef struct {
+    int A;
+    int B;
+} Rota;
+
+typedef struct {
+    int cidade;
+    int distancia;
+} FilaNo;
+
+int min(int a, int b) { return (a < b) ? a : b; }
+
+void menorCaminho(int N, int M, Rota* rotas, int C, int R, int E) {
+    int** grafo = (int**)malloc((N + 1) * sizeof(int*));
+    for (int i = 0; i <= N; i++)
+        grafo[i] = (int*)calloc((N + 1), sizeof(int));
+
+    for (int i = 0; i < M; i++) {
+        int A = rotas[i].A;
+        int B = rotas[i].B;
+        grafo[A][B] = 1;
+        grafo[B][A] = 1;
+    }
+
+    bool* visitado = (bool*)malloc((N + 1) * sizeof(bool));
+    int* distancia = (int*)malloc((N + 1) * sizeof(int));
+    for (int i = 0; i <= N; i++)
+        visitado[i] = false;
+
+    FilaNo* fila = (FilaNo*)malloc((N + 1) * sizeof(FilaNo));
+    int frente = 0, traseira = 0;
+
+    fila[traseira].cidade = C;
+    fila[traseira].distancia = 0;
+    traseira++;
+
+    visitado[C] = true;
+    distancia[C] = 0;
+
+    while (frente < traseira) {
+        int cidade = fila[frente].cidade;
+        int distanciaAtual = fila[frente].distancia;
+        frente++;
+
+        if (cidade == R)
+            break;
+
+        for (int vizinho = 1; vizinho <= N; vizinho++) {
+            if (grafo[cidade][vizinho] == 1 && vizinho != E && !visitado[vizinho]) {
+                visitado[vizinho] = true;
+                distancia[vizinho] = distanciaAtual + 1;
+                fila[traseira].cidade = vizinho;
+                fila[traseira].distancia = distanciaAtual + 1;
+                traseira++;
+            }
+        }
+    }
+
+    printf("%d\n", distancia[R]);
+
+    for (int i = 0; i <= N; i++)
+        free(grafo[i]);
+    free(grafo);
+    free(visitado);
+    free(distancia);
+    free(fila);
+}
+
+int main() {
+    int N, M;
+    Rota* rotas;
+    int C, R, E;
+
+    while (scanf("%d %d", &N, &M) == 2) {
+        rotas = (Rota*)malloc(M * sizeof(Rota));
+        for (int i = 0; i < M; i++)
+            scanf("%d %d", &rotas[i].A, &rotas[i].B);
+        scanf("%d %d %d", &C, &R, &E);
+
+        menorCaminho(N, M, rotas, C, R, E);
+
+        free(rotas);
+    }
+
+    return 0;
+}
